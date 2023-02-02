@@ -1,4 +1,4 @@
-local art = require "art.cube"
+local art = require "art.fire"
 local moonshine = require "lib.moonshine"
 
 local palette = {
@@ -36,7 +36,7 @@ local t = 0
 local effect = nil
 
 function love.load()
-  effect = moonshine(moonshine.effects.glow).chain(moonshine.effects.filmgrain)
+  effect = moonshine(moonshine.effects.glow)
 
   effect.glow.min_luma = 0.5
 end
