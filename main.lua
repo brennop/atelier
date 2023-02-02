@@ -1,4 +1,4 @@
-local art = require "art.liquid"
+local art = require "art.tunnel"
 
 local palette = {
   { 0x1A / 0x100, 0x1C / 0x100, 0x2C / 0x100 },
@@ -48,6 +48,11 @@ function love.draw()
       for k = 1, 4 do
         for l = 1, 4 do
           local index = math.floor(value + bayer[k][l] / 16) % #palette + 1
+
+          if index ~= index then
+            index = 1
+          end
+
           local color = palette[index]
           love.graphics.setColor(color)
           love.graphics.rectangle(
