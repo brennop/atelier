@@ -41,10 +41,28 @@ function rotY(v, a)
   return { v[1] * c + v[3] * s, v[2], -v[1] * s + v[3] * c }
 end
 
-function sdf(q)
-  local v = rotY(rotX(q, _t), _t)
-  local p = vecSum(abs(v), {-size, -size, -size})
+function cube(q)
+  local p = vecSum(abs(q), {-size, -size, -size})
   return length(max(p, 0)) - 0.07
+end
+
+function oct(q)
+  local p = abs(q)
+  return (p[1] + p[2] + p[3] - 1) * 0.5
+end
+
+function twist(v, l)
+  local k = math.sin(_t) * l
+  local c = math.cos(k * v[2])
+  local s = math.sin(k * v[2])
+  local a = {v[1] * c - v[3] * s, v[1] * s + v[3] * c, v[2]}
+  return a
+end
+
+function sdf(q)
+  local v = rotX(rotY(q, _t), _t)
+  -- local t = twist(v, 1)
+  return oct(v)
 end
 
 function raycast(ro, rd)

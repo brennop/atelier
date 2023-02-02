@@ -1,4 +1,4 @@
-local art = require "art.tunnel"
+local art = require "art.cube"
 
 local palette = {
   { 0x1A / 0x100, 0x1C / 0x100, 0x2C / 0x100 },
