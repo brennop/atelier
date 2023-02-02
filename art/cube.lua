@@ -83,13 +83,11 @@ function normal(q)
   return normalize(n)
 end
 
-return function(x,y,t, pixelSize)
+return function(x,y,t)
   _t = t * 0.25
 
-  local half = pixelSize / 2
-
   local ro = { 0, 0, 3 }
-  local rd = { (x - half) / pixelSize, (y - half) / pixelSize, -1 }
+  local rd = { (x - 0.5), (y - 0.5), -1 }
 
   local p = raycast(ro, rd)
 
@@ -97,7 +95,7 @@ return function(x,y,t, pixelSize)
     local q = vecSum(ro, vecScale(rd, p))
     local n = normal(q)
 
-    local light = { 0, 0, 1 }
+    local light = { 0, 0, 0.9 }
     local diffuse = clamp(dot(n, light))
 
     return 16 - diffuse * 4

@@ -1,4 +1,4 @@
-local art = require "art.cube"
+local art = require "art.liquid"
 
 local palette = {
   { 0x1A / 0x100, 0x1C / 0x100, 0x2C / 0x100 },
@@ -26,7 +26,7 @@ local bayer = {
   { 16,  8, 14,  6 },
 }
 
-local SIZE = 32
+local SIZE = 64
 local CANVAS_SIZE = 256
 local SCALE = CANVAS_SIZE / SIZE
 local TIMESCALE = 5
@@ -37,17 +37,13 @@ function love.update(dt)
   t = t + dt * TIMESCALE
 end
 
-function hy(x, y)
-  return math.sqrt(x * x + y * y)
-end
-
 function love.draw()
   for i = 1, SIZE do
     for j = 1, SIZE do
       local x = (i - 1)
       local y = (j - 1)
 
-      local value = art(x, y, t, SIZE)
+      local value = art(x / SIZE, y / SIZE, t)
 
       for k = 1, 4 do
         for l = 1, 4 do
