@@ -1,3 +1,5 @@
+local art = require "art.cube"
+
 local palette = {
   { 0x1A / 0x100, 0x1C / 0x100, 0x2C / 0x100 },
   { 0x5D / 0x100, 0x27 / 0x100, 0x5D / 0x100 },
@@ -17,17 +19,50 @@ local palette = {
   { 0x33 / 0x100, 0x3C / 0x100, 0x57 / 0x100 },
 }
 
+local bayer = {
+  {  1,  9,  3, 11 },
+  { 13,  5, 15,  7 },
+  {  4, 12,  2, 10 },
+  { 16,  8, 14,  6 },
+}
+
 local SIZE = 32
-local SCALE = 8
+local CANVAS_SIZE = 256
+local SCALE = CANVAS_SIZE / SIZE
+local TIMESCALE = 5
+
+local t = 0
+
+function love.update(dt)
+  t = t + dt * TIMESCALE
+end
+
+function hy(x, y)
+  return math.sqrt(x * x + y * y)
+end
 
 function love.draw()
   for i = 1, SIZE do
     for j = 1, SIZE do
-      local x = (i - 1) 
+      local x = (i - 1)
       local y = (j - 1)
-      local color = palette[x % #palette + 1]
-      love.graphics.setColor(color)
-      love.graphics.rectangle('fill', x * SCALE, y * SCALE, SCALE, SCALE)
+
+      local value = art(x, y, t, SIZE)
+
+      for k = 1, 4 do
+        for l = 1, 4 do
+          local index = math.floor(value + bayer[k][l] / 16) % #palette + 1
+          local color = palette[index]
+          love.graphics.setColor(color)
+          love.graphics.rectangle(
+            "fill",
+            (i - 1) * SCALE + (k - 1) * SCALE / 4,
+            (j - 1) * SCALE + (l - 1) * SCALE / 4,
+            SCALE / 4,
+            SCALE / 4
+          )
+        end
+      end
     end
   end
 end
