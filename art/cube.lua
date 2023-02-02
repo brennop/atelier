@@ -116,8 +116,8 @@ return function(x,y,t)
     local light = { 0, 0, 0.9 }
     local diffuse = clamp(dot(n, light))
 
-    return 16 - diffuse * 4
+    return 16 - diffuse * 3
   end
 
-  return 15.99
+  return 16
 end
