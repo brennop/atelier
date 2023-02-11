@@ -55,6 +55,11 @@ function oct(q)
   return (p[1] + p[2] + p[3] - 1) * 0.5
 end
 
+function torus(q, t)
+  local p = { length({q[1], q[2], 0}) - t[1], q[3], 0 }
+  return length(p) - t[2]
+end
+
 function twist(v, l)
   local k = math.sin(_t) * l
   local c = math.cos(k * v[2])
@@ -64,9 +69,8 @@ function twist(v, l)
 end
 
 function sdf(q)
-  local v = rotX(rotY(q, _t), _t)
-  -- local t = twist(v, 1)
-  return oct(v)
+  local v = rotX(rotY(q, _t ), _t)
+  return torus(v, { 0.7, 0.3 })
 end
 
 function raycast(ro, rd)
@@ -120,16 +124,16 @@ local function art(x,y,t)
     local light = { 0, 0, 0.9 }
     local diffuse = clamp(dot(n, light))
 
-    return 16 - diffuse * 3
+    return 16 - diffuse * 4
   end
 
   return 16
 end
 
 function love.load()
-  save(function(f)
-    renderer(art, 64, 756, f * 0.2)
-  end, 24 * 10, "out")
+  -- save(function(f)
+  --   renderer(art, 64, 756, f * 0.2)
+  -- end, 24 * 10, "torus")
 end
 
 function love.draw()
