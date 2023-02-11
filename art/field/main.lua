@@ -1,31 +1,22 @@
-local size = 32
-local scale = nil
-local r = math.random()
-local k = 100
+local k = 0.01
 local t = 0
 
-function rotate(x, y, a)
-  return x * math.cos(a) - y * math.sin(a), x * math.sin(a) + y * math.cos(a)
-end
-
-function love.load()
-  scale = love.graphics.getWidth() / size
-end
-
 function love.update(dt)
-  t = t + dt * 0.5
+  t = t + dt * .5
 end
 
 function love.draw()
   love.graphics.clear(1, 1, 1, 1)
-  for i = 1, size do
-    for j = 1, size do
-      love.graphics.setColor(0, 0, 0)
-      local x = (i - .5) * scale
-      local y = (j - .5) * scale
-      local n = love.math.noise(x / k, y / k, t)
-      local ex, ey = rotate(0, 4, n * math.pi * 2)
-      love.graphics.circle("fill", x + ex, y + ey, 1 + n * 3)
+  love.graphics.setBlendMode("subtract")
+  for x = 32, 224, 4 do
+    for y = 32, 224, 4 do
+      for i = 1, 3 do
+        local a = love.math.noise(x*k, y*k, t+i*0.05) * math.pi * 2
+        local color = { 0, 0, 0 }
+        color[i] = 1
+        love.graphics.setColor(color)
+        love.graphics.circle("fill", x-math.sin(a)*8, y+math.cos(a)*8, a*0.4)
+      end
     end
   end
 end
