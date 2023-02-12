@@ -45,9 +45,21 @@ function rotY(v, a)
   return { v[1] * c + v[3] * s, v[2], -v[1] * s + v[3] * c }
 end
 
-function cube(q)
-  local p = vecSum(abs(q), {-size, -size, -size})
-  return length(max(p, 0)) - 0.07
+function cube(q, k)
+  local s = k or { -size, -size, -size }
+  local p = vecSum(abs(q), s)
+  return length(max(p, 0)) - 0.15
+end
+
+function frame(v)
+  local e = 0.1
+  local p = vecSum(abs(v), { -size, -size, -size })
+  local q = vecSum(abs(v), { -e, -e, -e })
+  return math.min(
+    length(max({ p[1], q[2], q[3] }, 0)) + math.min(math.max(p[1], q[2], q[3]), 0),
+    length(max({ q[1], p[2], q[3] }, 0)) + math.min(math.max(q[1], p[2], q[3]), 0),
+    length(max({ q[1], q[2], p[3] }, 0)) + math.min(math.max(q[1], q[2], p[3]), 0)
+  )
 end
 
 function oct(q)
@@ -68,9 +80,13 @@ function twist(v, l)
   return a
 end
 
+function frame_approx(v)
+  return math.max(cube(v), -cube(v, { -size * 2, -size * 0.8, -size * 0.8 }), -cube(v, { -size * 0.8, -size * 2, -size * 0.8 }), -cube(v, { -size * 0.8, -size * 0.8, -size * 2 }))
+end
+
 function sdf(q)
   local v = rotX(rotY(q, _t ), _t)
-  return torus(v, { 0.7, 0.3 })
+  return math.max(cube(v), length(v) - 0.9)
 end
 
 function raycast(ro, rd)
@@ -124,7 +140,7 @@ local function art(x,y,t)
     local light = { 0, 0, 0.9 }
     local diffuse = clamp(dot(n, light))
 
-    return 16 - diffuse * 4
+    return diffuse * 4 + (p - 2) * 4
   end
 
   return 16
@@ -133,7 +149,7 @@ end
 function love.load()
   -- save(function(f)
   --   renderer(art, 64, 756, f * 0.2)
-  -- end, 24 * 10, "torus")
+  -- end, 24 * 10, "hollow")
 end
 
 function love.draw()
