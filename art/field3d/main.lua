@@ -12,8 +12,8 @@ local q = size/4
 local from = padding - h
 local to = size - padding - h
 
-local k = 0.01
-local l = 16
+local k = 0.005
+local l = 0.5
 
 function draw(t)
   love.graphics.clear(1, 1, 1, 1)
@@ -23,11 +23,11 @@ function draw(t)
     for y = from, to, gap do
       for z = from, to, gap do
         for i = 1, 3 do
-          local a = love.math.noise(x*k,y*k,z*k,t)*2
+          local a = (love.math.noise(x*k,y*k,z*k,t+i*0.05) - 0.5) * l
 
-          local cx = x + (love.math.noise(y*k,z*k,t+i*0.25) - 0.5) * l
-          local cy = y + (love.math.noise(z*k,x*k,t+i*0.25) - 0.5) * l
-          local cz = z + (love.math.noise(x*k,y*k,t+i*0.25) - 0.5) * l
+          local cx = x * (1 + a)
+          local cy = y * (1 + a)
+          local cz = z * (1 + a)
 
           local v = rx(ry(rz({cx, cy, cz}, t), t), 0)
 
@@ -35,7 +35,7 @@ function draw(t)
           color[i] = 1
 
           love.graphics.setColor(color)
-          love.graphics.circle("fill", v[1] + h, v[2] + h, v[3] / q + a + 2)
+          love.graphics.circle("fill", v[1] + h, v[2] + h, v[3] / h + a + 2)
         end
       end
     end
@@ -43,7 +43,7 @@ function draw(t)
 end
 
 function love.load()
-  save(function(f) draw(f/30*0.4) end, 360, "out1")
+  -- save(function(f) draw(f/30*0.4) end, 360, "out1")
 end
 
 function love.draw()
