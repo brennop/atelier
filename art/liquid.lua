@@ -5,7 +5,7 @@ function hy(v)
   return math.sqrt(v[1] * v[1] + v[2] * v[2])
 end
 
-return function(x, y, t)
+local art = function(x, y, t)
   local len = 0
 
   x = x * 4
@@ -19,4 +19,8 @@ return function(x, y, t)
   end
 
   return math.max(cos(len) * 3, 0)
+end
+
+function love.draw()
+  lib.fragment(art, 64, 512, love.timer.getTime() * 5)
 end

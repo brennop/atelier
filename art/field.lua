@@ -1,6 +1,3 @@
-package.path = package.path .. ";../?.lua"
-local save = require "lib.save"
-
 local k = 0.007
 local t = 0
 
@@ -25,7 +22,7 @@ function draw(t)
 end
 
 function love.load()
-  save(function(f) draw(f*0.02) end, 240, "out")
+  -- save(function(f) draw(f*0.02) end, 240, "out")
 end
 
 function love.draw()

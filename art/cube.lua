@@ -1,7 +1,3 @@
-package.path = package.path .. ";../?.lua"
-local renderer = require "lib.fragment"
-local save = require "lib.save"
-
 local _t = 0
 local size = 0.6
 
@@ -86,7 +82,7 @@ end
 
 function sdf(q)
   local v = rotX(rotY(q, _t ), _t)
-  return math.max(cube(v), length(v) - 0.9)
+  return cube(v)
 end
 
 function raycast(ro, rd)
@@ -146,12 +142,15 @@ local function art(x,y,t)
   return 16
 end
 
+local canvasSize = 0
+
 function love.load()
   -- save(function(f)
   --   renderer(art, 64, 756, f * 0.2)
   -- end, 24 * 10, "hollow")
+  canvasSize = love.graphics.getWidth()
 end
 
 function love.draw()
-  renderer(art, 64, 756, love.timer.getTime() * 5)
+  lib.fragment(art, 64, canvasSize, love.timer.getTime() * 5)
 end

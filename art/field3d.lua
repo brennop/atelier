@@ -1,16 +1,12 @@
-package.path = package.path .. ";../lib/?.lua"
-local utils = require "utils"
-local save = require "save"
+local rx, ry, rz = lib.utils.rotX, lib.utils.rotY, lib.utils.rotZ
 
-local rx, ry, rz = utils.rotX, utils.rotY, utils.rotZ
-
-local size = 768
+local size = nil
 local padding = 32 * 6
 local gap = 32
-local h = size/2
-local q = size/4
-local from = padding - h
-local to = size - padding - h
+local h = nil
+local q = nil
+local from = nil
+local to = nil
 
 local k = 0.005
 local l = 0.5
@@ -43,6 +39,11 @@ function draw(t)
 end
 
 function love.load()
+  size = love.graphics.getWidth()
+  h = size / 2
+  q = size / 4
+  from = padding - h
+  to = size - padding - h
   -- save(function(f) draw(f/30*0.4) end, 360, "out1")
 end
 
