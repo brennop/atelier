@@ -21,6 +21,12 @@ local art = function(x, y, t)
   return math.max(cos(len) * 3, 0)
 end
 
+function love.load()
+  lib.save(function(f)
+    lib.fragment(art, 64, 512, f * 5)
+  end, 240, 24)
+end
+
 function love.draw()
   lib.fragment(art, 64, 512, love.timer.getTime() * 5)
 end

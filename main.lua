@@ -1,4 +1,4 @@
 require "lib"
 
 -- require art next
-require "art.field"
+require "art.liquid"
