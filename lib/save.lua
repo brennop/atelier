@@ -21,10 +21,10 @@ return function(draw, frames, framerate)
     "ffmpeg", 
     "-framerate", framerate, 
     "-i", dir .. "/%05d.png",
-    "-c:v", "libx265",
-    "-crf", "26",
+    "-c:v", "libx264",
+    -- "-crf", "26",
     "-pix_fmt", "yuv420p", 
-    "out.mp4"
+    "/tmp/" .. timestamp .. ".mp4"
   }, " "))
 
   os.execute("rm -rd " .. dir)
