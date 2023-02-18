@@ -1,9 +1,9 @@
 local hy, st = lib.utils.length, lib.utils.smoothstep
-local abs, cos = math.abs, math.cos
+local abs, cos, max = math.abs, math.cos, math.max
 
 local art = function(x, y, t)
   local h = 0.5
-  return st(0,10,hy({x-h,abs(x-h)+y-.55,0})*40+cos(t*h))+2
+  return max(cos(hy({x-h,abs(x-h)+y-.55,0})*20-t)*3, 0)
 end
 
 function love.load()
