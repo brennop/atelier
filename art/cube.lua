@@ -1,9 +1,7 @@
 local _t = 0
 local size = 0.6
 
-function length(v)
-  return math.sqrt(v[1] * v[1] + v[2] * v[2] + v[3] * v[3])
-end
+local length, rx, ry, rz = lib.utils.length, lib.utils.rotX, lib.utils.rotY, lib.utils.rotZ
 
 function vecSum(a, b)
   return { a[1] + b[1], a[2] + b[2], a[3] + b[3] }
@@ -29,22 +27,10 @@ function max(a, b)
   return {math.max(a[1], b), math.max(a[2], b), math.max(a[3], b)}
 end
 
-function rotX(v, a)
-  local c = math.cos(a)
-  local s = math.sin(a)
-  return { v[1], v[2] * c - v[3] * s, v[2] * s + v[3] * c }
-end
-
-function rotY(v, a)
-  local c = math.cos(a)
-  local s = math.sin(a)
-  return { v[1] * c + v[3] * s, v[2], -v[1] * s + v[3] * c }
-end
-
 function cube(q, k)
   local s = k or { -size, -size, -size }
   local p = vecSum(abs(q), s)
-  return length(max(p, 0)) - 0.1
+  return length(max(p, 0)) - 0.05
 end
 
 function frame(v)
@@ -81,7 +67,7 @@ function frame_approx(v)
 end
 
 function sdf(q)
-  local v = rotX(rotY(q, _t ), _t)
+  local v = rx(ry(q, _t ), _t)
   return cube(v)
 end
 
@@ -122,18 +108,18 @@ function normal(q)
 end
 
 local function art(x,y,t)
-  _t = t * 0.25
+  _t = t * 0.15
 
-  local ro = { 0, 0, 3 }
+  local ro = { 0, 0, 4 + math.cos(_t * 0.5) * 1.5 }
   local rd = { (x - 0.5), (y - 0.5), -1 }
 
   local p = raycast(ro, rd)
 
-  if p < 5 then
+  if p < 10 then
     local q = vecSum(ro, vecScale(rd, p))
     local n = normal(q)
 
-    local light = { 0, 0, 1 }
+    local light = rx({ 0, 0, 0.9 }, 0)
     local diffuse = clamp(dot(n, light))
 
     return diffuse
@@ -144,14 +130,17 @@ end
 
 local canvasSize = 768
 
--- function love.load()
---   -- save(function(f)
---   --   renderer(art, 64, 756, f * 0.2)
---   -- end, 24 * 10, "hollow")
---   canvasSize = love.graphics.getWidth()
--- end
+ function love.load()
+   -- save(function(f)
+   --   renderer(art, 64, 756, f * 0.2)
+   -- end, 24 * 10, "hollow")
+   canvasSize = love.graphics.getWidth()
+
+  font = love.graphics.newFont("neodgm.ttf", 16, "mono")
+  love.graphics.setFont(font)
+end
 
 function love.draw()
   -- lib.fragment(art, 64, canvasSize, love.timer.getTime() * 5)
-  lib.ascii(art, 48, canvasSize, love.timer.getTime() * 5)
+  lib.ascii(art, 96, canvasSize, love.timer.getTime() * 5)
 end
