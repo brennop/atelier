@@ -22,4 +22,11 @@ function utils.rotZ(v, a)
   return { v[1] * c - v[2] * s, v[1] * s + v[2] * c, v[3] }
 end
 
+function utils.smoothstep(a, b, x)
+  if x < a then return a end
+  if x > b then return b end
+  local y = (x - a) / (b - a)
+  return y * y * (3 - 2 * y)
+end
+
 return utils
