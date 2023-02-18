@@ -44,7 +44,7 @@ end
 function cube(q, k)
   local s = k or { -size, -size, -size }
   local p = vecSum(abs(q), s)
-  return length(max(p, 0)) - 0.15
+  return length(max(p, 0)) - 0.1
 end
 
 function frame(v)
@@ -133,24 +133,25 @@ local function art(x,y,t)
     local q = vecSum(ro, vecScale(rd, p))
     local n = normal(q)
 
-    local light = { 0, 0, 0.9 }
+    local light = { 0, 0, 1 }
     local diffuse = clamp(dot(n, light))
 
-    return diffuse * 4 + (p - 2) * 4
+    return diffuse
   end
 
-  return 16
+  return 1
 end
 
-local canvasSize = 0
+local canvasSize = 768
 
-function love.load()
-  -- save(function(f)
-  --   renderer(art, 64, 756, f * 0.2)
-  -- end, 24 * 10, "hollow")
-  canvasSize = love.graphics.getWidth()
-end
+-- function love.load()
+--   -- save(function(f)
+--   --   renderer(art, 64, 756, f * 0.2)
+--   -- end, 24 * 10, "hollow")
+--   canvasSize = love.graphics.getWidth()
+-- end
 
 function love.draw()
-  lib.fragment(art, 64, canvasSize, love.timer.getTime() * 5)
+  -- lib.fragment(art, 64, canvasSize, love.timer.getTime() * 5)
+  lib.ascii(art, 48, canvasSize, love.timer.getTime() * 5)
 end

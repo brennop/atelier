@@ -7,4 +7,9 @@ function love.keypressed(key)
 end
 
 -- require art next
-require "art.snake"
+require "art.cube"
+
+function love.load()
+  font = love.graphics.newFont("neodgm.ttf", 16, "mono")
+  love.graphics.setFont(font)
+end
