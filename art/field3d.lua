@@ -2,14 +2,18 @@ local rx, ry, rz = lib.utils.rotX, lib.utils.rotY, lib.utils.rotZ
 
 local size = nil
 local padding = 32 * 6
-local gap = 32
+local gap = 64
 local h = nil
 local q = nil
 local from = nil
 local to = nil
+local p = nil
 
 local k = 0.005
 local l = 0.5
+
+local maxZ = -1000
+local minZ = 1000
 
 function draw(t)
   love.graphics.clear(1, 1, 1, 1)
@@ -19,19 +23,19 @@ function draw(t)
     for y = from, to, gap do
       for z = from, to, gap do
         for i = 1, 3 do
-          local a = (love.math.noise(x*k,y*k,z*k,t+i*0.05) - 0.5) * l
+          -- local a = (love.math.noise(x*k,y*k,z*k,t+i*0.05) - 0.5) * l
 
-          local cx = x * (1 + a)
-          local cy = y * (1 + a)
-          local cz = z * (1 + a)
+          local v = rx(ry(rz({x, y, z}, t), t), 0)
 
-          local v = rx(ry(rz({cx, cy, cz}, t), t), 0)
+          local dist = v[3] / p - 1
 
-          local color = {0,0,0}
+          local e = rz({dist * 1.5, 0, 0}, i * 2 * math.pi / 3)
+
+          local color = {0,0,0, 1.8 + dist}
           color[i] = 1
 
           love.graphics.setColor(color)
-          love.graphics.circle("fill", v[1] + h, v[2] + h, v[3] / h + a + 2)
+          love.graphics.circle("fill", v[1] + h + e[1], v[2] + h + e[2], 2.5)
         end
       end
     end
@@ -44,7 +48,9 @@ function love.load()
   q = size / 4
   from = padding - h
   to = size - padding - h
-  -- save(function(f) draw(f/30*0.4) end, 360, "out1")
+  p = to * 2
+
+  lib.save(function(f) draw(f * 0.4) end, 30 * 15, 30)
 end
 
 function love.draw()
