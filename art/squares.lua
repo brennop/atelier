@@ -5,7 +5,7 @@ local scale = 0
 local inscale = .5
 
 function love.load()
-  data = love.image.newImageData("skull.png")
+  data = love.image.newImageData("butterfly.png")
   width = data:getWidth()
   height = data:getHeight()
   scale = love.graphics.getWidth() / width * inscale
@@ -18,25 +18,28 @@ end
 function love.draw()
   love.graphics.clear(220 / 255, 220 / 255, 220 / 255)
   love.graphics.translate(love.graphics.getWidth() / 2, love.graphics.getHeight() / 2)
+
+  love.graphics.setBlendMode("subtract")
   for i = 0, width - 1 do
     for j = 0, height - 1 do
 
       local r, g, b, a = data:getPixel(i, j)
+      r,g,b = 1 - r, 1 - g, 1 - b
 
-      -- local avg = (1 - getY(r, g, b)) ^ 1 + .05
-      local avg = love.math.noise(i/8, j/8, love.timer.getTime() * .5) * 2
-      local s = (avg * scale)
+      -- local avg = (1 - getY(r, g, b)) ^ 1
+      -- local s = (avg * scale)
 
-      local noise = love.math.noise(i/8, j/8, love.timer.getTime() * .5) * 2
+      local x = (i - width/2) * scale
+      local y = (j - height/2) * scale
 
-      local x = (i - width/2) * scale + noise * s * .5
-      local y = (j - height/2) * scale + noise * s * .5
+      love.graphics.setColor(0, 1, 1, 1)
+      love.graphics.rectangle("fill", x, y, scale, r * scale)
 
-
-      s = s + noise * s * .5
-
-      love.graphics.setColor(0.15, 0.15, 0.15, 1)
-      love.graphics.rectangle("fill", x, y, s, s)
+      love.graphics.setColor(1, 0, 1, 1)
+      love.graphics.rectangle("fill", x, y, scale, b * scale)
+      
+      love.graphics.setColor(1, 1, 0, 1)
+      love.graphics.rectangle("fill", x, y, scale, g * scale)
     end
   end
 end
