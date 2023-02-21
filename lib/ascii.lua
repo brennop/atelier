@@ -27,7 +27,7 @@ return function(art, size, canvasSize, t)
         color[c] = 1
         love.graphics.setColor(color)
         local blur = (1-value) ^ (1/3)
-        local v = rz({ blur * .9, 0, 0 }, (c - 1) * math.pi * 2 / 3)
+        local v = rz({ blur * .5, 0, 0 }, (c - 1) * math.pi * 2 / 3)
         local ex = v[1]
         local ey = v[2]
         love.graphics.print(char, x * scale + ex, y * scale + ey - 4, 0, 1, 1)

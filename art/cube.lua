@@ -67,8 +67,8 @@ function frame_approx(v)
 end
 
 function sdf(q)
-  local v = rx(ry(q, _t ), _t)
-  return cube(v)
+  local v = rx(ry(rz(q, _t), _t * 1), _t * 3)
+  return length(v) - 0.9
 end
 
 function raycast(ro, rd)
@@ -108,9 +108,9 @@ function normal(q)
 end
 
 local function art(x,y,t)
-  _t = t * 0.15
+  _t = t * 0.05
 
-  local ro = { 0, 0, 4 + math.cos(_t * 0.5) * 1.5 }
+  local ro = { 0, 0, 4 }
   local rd = { (x - 0.5), (y - 0.5), -1 }
 
   local p = raycast(ro, rd)
@@ -119,7 +119,7 @@ local function art(x,y,t)
     local q = vecSum(ro, vecScale(rd, p))
     local n = normal(q)
 
-    local light = rx({ 0, 0, 0.9 }, 0)
+    local light = ry(rz(rx({ 0, 0, 1 }, _t * 6), 2), _t * 0)
     local diffuse = clamp(dot(n, light))
 
     return diffuse
@@ -130,14 +130,15 @@ end
 
 local canvasSize = 768
 
- function love.load()
-   -- save(function(f)
-   --   renderer(art, 64, 756, f * 0.2)
-   -- end, 24 * 10, "hollow")
-   canvasSize = love.graphics.getWidth()
+function love.load()
+  canvasSize = love.graphics.getWidth()
 
   font = love.graphics.newFont("neodgm.ttf", 16, "mono")
   love.graphics.setFont(font)
+
+  lib.save(function(f)
+    lib.ascii(art, 96, canvasSize, f * 5)
+  end, 30 * 10, 30)
 end
 
 function love.draw()

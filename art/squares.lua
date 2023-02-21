@@ -32,14 +32,14 @@ function love.draw()
       local x = (i - width/2) * scale
       local y = (j - height/2) * scale
 
-      love.graphics.setColor(0, 1, 1, 1)
-      love.graphics.rectangle("fill", x, y, scale, r * scale)
+      love.graphics.setColor(1, 0, 0, 1)
+      love.graphics.rectangle("fill", x, y, r*scale, r * scale)
 
-      love.graphics.setColor(1, 0, 1, 1)
-      love.graphics.rectangle("fill", x, y, scale, b * scale)
+      love.graphics.setColor(0, 1, 0, 1)
+      love.graphics.rectangle("fill", x, y, g*scale, g * scale)
       
-      love.graphics.setColor(1, 1, 0, 1)
-      love.graphics.rectangle("fill", x, y, scale, g * scale)
+      love.graphics.setColor(0, 0, 1, 1)
+      love.graphics.rectangle("fill", x, y, b*scale, b * scale)
     end
   end
 end

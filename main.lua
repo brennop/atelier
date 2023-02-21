@@ -7,4 +7,4 @@ function love.keypressed(key)
 end
 
 -- require art next
-require "art.squares"
+require "art.cube"
