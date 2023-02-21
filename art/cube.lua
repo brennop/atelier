@@ -33,6 +33,20 @@ function cube(q, k)
   return length(max(p, 0)) - 0.05
 end
 
+function heart(v)
+  local x, y, z = v[1], v[2], v[3]
+  local r = 0.8 -- + math.sin(_t * 12) ^ 4 * 0.1
+  z = z * (1.36 + y * .4)
+  x = math.abs(x)
+  y = y + x * math.sqrt((10-x)/20)
+  return length({ x, y, z }) - r
+end
+
+function cyl(v)
+  local q = rz(ry(rx(v, 0.5), 0.5), 0.5)
+  return length({ q[1], q[2], 0 }) - 0.1
+end
+
 function frame(v)
   local e = 0.1
   local p = vecSum(abs(v), { -size, -size, -size })
@@ -67,8 +81,10 @@ function frame_approx(v)
 end
 
 function sdf(q)
-  local v = rx(ry(rz(q, _t), _t * 1), _t * 3)
-  return length(v) - 0.9
+  -- local v = rx(ry(rz(q, _t), _t * 1), _t * 3)
+  -- local v = ry(q, _t * 2.5)
+  return heart(q)
+  -- return math.min(cyl(q), heart(q))
 end
 
 function raycast(ro, rd)
@@ -110,22 +126,23 @@ end
 local function art(x,y,t)
   _t = t * 0.05
 
-  local ro = { 0, 0, 4 }
-  local rd = { (x - 0.5), (y - 0.5), -1 }
+  local ro = ry({ 0, 0, 3 }, _t * 4)
+  local rd = ry({ (x - 0.5), (y - 0.5), -1 }, _t * 4)
 
   local p = raycast(ro, rd)
 
-  if p < 10 then
+  if p < 5 then
     local q = vecSum(ro, vecScale(rd, p))
     local n = normal(q)
 
-    local light = ry(rz(rx({ 0, 0, 1 }, _t * 6), 2), _t * 0)
+    local light = { .577, .577, -.577 }
     local diffuse = clamp(dot(n, light))
+    local ambient = 0.5 + 0.5 * dot(n, {0, -1, 0})
 
-    return diffuse
+    return ambient * 3 + diffuse * 1
   end
 
-  return 1
+  return 0
 end
 
 local canvasSize = 768
@@ -137,11 +154,11 @@ function love.load()
   love.graphics.setFont(font)
 
   lib.save(function(f)
-    lib.ascii(art, 96, canvasSize, f * 5)
+    lib.fragment(art, 64, canvasSize, f * 5)
   end, 30 * 10, 30)
 end
 
 function love.draw()
-  -- lib.fragment(art, 64, canvasSize, love.timer.getTime() * 5)
-  lib.ascii(art, 96, canvasSize, love.timer.getTime() * 5)
+  lib.fragment(art, 64, canvasSize, love.timer.getTime() * 5)
+  -- lib.ascii(art, 96, canvasSize, love.timer.getTime() * 5)
 end
