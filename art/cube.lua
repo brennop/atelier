@@ -153,9 +153,9 @@ function love.load()
   font = love.graphics.newFont("neodgm.ttf", 16, "mono")
   love.graphics.setFont(font)
 
-  lib.save(function(f)
-    lib.fragment(art, 64, canvasSize, f * 5)
-  end, 30 * 10, 30)
+  -- lib.save(function(f)
+  --   lib.fragment(art, 64, canvasSize, f * 5)
+  -- end, 30 * 10, 30)
 end
 
 function love.draw()
