@@ -43,7 +43,7 @@ function heart(v)
 end
 
 function cyl(v)
-  local q = rz(ry(rx(v, 0.5), 0.5), 0.5)
+  local q = rz(ry(rx(v, -0.5), -0.5), -0.5)
   return length({ q[1], q[2], 0 }) - 0.1
 end
 
@@ -69,7 +69,7 @@ function torus(q, t)
 end
 
 function twist(v, l)
-  local k = math.sin(_t) * l
+  local k = math.cos(_t) * l
   local c = math.cos(k * v[2])
   local s = math.sin(k * v[2])
   local a = {v[1] * c - v[3] * s, v[1] * s + v[3] * c, v[2]}
@@ -81,10 +81,9 @@ function frame_approx(v)
 end
 
 function sdf(q)
-  -- local v = rx(ry(rz(q, _t), _t * 1), _t * 3)
-  -- local v = ry(q, _t * 2.5)
-  return heart(q)
-  -- return math.min(cyl(q), heart(q))
+  -- local q = rx(ry(rz(q, _t), _t * 1), _t * 3)
+  local q = ry(q, _t * 2.5)
+  return math.min(cyl(q), heart(q))
 end
 
 function raycast(ro, rd)
@@ -126,8 +125,8 @@ end
 local function art(x,y,t)
   _t = t * 0.05
 
-  local ro = ry({ 0, 0, 3 }, _t * 4)
-  local rd = ry({ (x - 0.5), (y - 0.5), -1 }, _t * 4)
+  local ro = { 0, 0, 3 }
+  local rd = { (x - 0.5), (y - 0.5), -1 }
 
   local p = raycast(ro, rd)
 
@@ -139,7 +138,7 @@ local function art(x,y,t)
     local diffuse = clamp(dot(n, light))
     local ambient = 0.5 + 0.5 * dot(n, {0, -1, 0})
 
-    return ambient * 3 + diffuse * 1
+    return 11 - ambient * 3 + diffuse * 1
   end
 
   return 0
