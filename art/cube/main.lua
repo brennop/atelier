@@ -84,9 +84,22 @@ function frame_approx(v)
   return math.max(cube(v), -cube(v, { -size * 2, -size * 0.8, -size * 0.8 }), -cube(v, { -size * 0.8, -size * 2, -size * 0.8 }), -cube(v, { -size * 0.8, -size * 0.8, -size * 2 }))
 end
 
+function icosahedron(q)
+  local G = 0.5 + 0.5 * math.sqrt(5)
+  local n = normalize({ G, 1/G, 0 })
+  local d = normalize({ 1, 1, 1 })
+  local p = abs(q)
+  return math.max(
+    dot(p, n),
+    dot(p, { n[3], n[1], n[2] }),
+    dot(p, { n[2], n[3], n[1] }),
+    dot(p, d)
+  ) - 0.7
+end
+
 function sdf(q)
   local v = rotX(rotY(q, _t ), _t)
-  return math.max(cube(v), length(v) - 0.9)
+  return icosahedron(v)
 end
 
 function raycast(ro, rd)
@@ -131,16 +144,20 @@ local function art(x,y,t)
   local ro = { 0, 0, 3 }
   local rd = { (x - 0.5), (y - 0.5), -1 }
 
+  -- local __t = _t * 0.8 * -1
+  -- ro = rotX(rotY(ro, __t), __t)
+  -- rd = rotX(rotY(rd, __t), __t)
+
   local p = raycast(ro, rd)
 
   if p < 5 then
     local q = vecSum(ro, vecScale(rd, p))
     local n = normal(q)
 
-    local light = { 0, 0, 0.9 }
+    local light = { 0, 0, 0.2 }
     local diffuse = clamp(dot(n, light))
 
-    return diffuse * 4 + (p - 2) * 4
+    return diffuse * 8 + (p - 2) * 0.0 + 0.5
   end
 
   return 16
@@ -153,5 +170,5 @@ function love.load()
 end
 
 function love.draw()
-  renderer(art, 64, 756, love.timer.getTime() * 5)
+  renderer(art, 64, 768, love.timer.getTime() * 5)
 end
