@@ -97,9 +97,20 @@ function icosahedron(q)
   ) - 0.7
 end
 
+function dodecahedron(q)
+  local G = 0.5 + 0.5 * math.sqrt(5)
+  local n = normalize({ G, 1, 0 })
+  local p = abs(q)
+  return math.max(
+    dot(p, n),
+    dot(p, { n[3], n[1], n[2] }),
+    dot(p, { n[2], n[3], n[1] })
+  ) - 0.7
+end
+
 function sdf(q)
   local v = rotX(rotY(q, _t ), _t)
-  return icosahedron(v)
+  return dodecahedron(v)
 end
 
 function raycast(ro, rd)
@@ -154,10 +165,10 @@ local function art(x,y,t)
     local q = vecSum(ro, vecScale(rd, p))
     local n = normal(q)
 
-    local light = { 0, 0, 0.2 }
+    local light = { 0, 0, 0.9 }
     local diffuse = clamp(dot(n, light))
 
-    return diffuse * 8 + (p - 2) * 0.0 + 0.5
+    return diffuse * 5 + (p - 1) * 0.0 + 7
   end
 
   return 16
