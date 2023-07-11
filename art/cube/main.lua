@@ -121,15 +121,30 @@ function weirdedron(q)
   ) - 0.6
 end
 
+function crystal(q)
+  local c = math.cos(math.pi/5)
+  local s = math.sqrt(0.75 - c*c)
+  local n = { -0.5, -c, s }
+
+  local p = abs(q)
+
+  for i = 1, 3 do
+    p = abs(p)
+    p = vecSum(p, vecScale(n, -2 * math.min(0, dot(p, n))))
+  end
+
+  return p[3] - 0.7
+end
+
 function sdf(q)
   local v = rotX(rotY(q, _t ), _t)
-  return weirdedron(v)
+  return crystal(v)
 end
 
 function raycast(ro, rd)
   local a = 0
 
-  for i = 1, 64 do
+  for i = 1, 48 do
     local p = vecSum(ro, vecScale(rd, a))
     local d = sdf(p)
 
@@ -174,14 +189,15 @@ local function art(x,y,t)
 
   local p = raycast(ro, rd)
 
-  if p < 5 then
+  if p < 3 then
     local q = vecSum(ro, vecScale(rd, p))
     local n = normal(q)
 
     local light = { 0, 0, 0.9 }
     local diffuse = clamp(dot(n, light))
 
-    return diffuse * 4 + (0 - p) * 1.15 + (p - 0) * 0.0 + -1
+    -- return diffuse * 4 + n[1] --+ (8 - p) * 8 + 8
+    return 16 - diffuse * p * 1.7
   end
 
   return 16
@@ -194,5 +210,5 @@ function love.load()
 end
 
 function love.draw()
-  renderer(art, 64, 768, love.timer.getTime() * 5)
+  renderer(art, 96, 768, love.timer.getTime() * 5)
 end
