@@ -108,9 +108,22 @@ function dodecahedron(q)
   ) - 0.7
 end
 
+function weirdedron(q)
+  local G = 0.5 + 0.5 * math.sqrt(5)
+  local n = normalize({ G, 1/G, 0 })
+  local d = normalize({ 1, 1, 1 })
+  local p = abs(q)
+  return math.max(
+    -- dot(p, n),
+    dot(p, { n[3], n[1], n[2] }),
+    dot(p, { n[2], n[3], n[1] }),
+    dot(p, d)
+  ) - 0.6
+end
+
 function sdf(q)
   local v = rotX(rotY(q, _t ), _t)
-  return dodecahedron(v)
+  return weirdedron(v)
 end
 
 function raycast(ro, rd)
@@ -155,7 +168,7 @@ local function art(x,y,t)
   local ro = { 0, 0, 3 }
   local rd = { (x - 0.5), (y - 0.5), -1 }
 
-  -- local __t = _t * 0.8 * -1
+  -- local __t = _t * 0.1 * -1
   -- ro = rotX(rotY(ro, __t), __t)
   -- rd = rotX(rotY(rd, __t), __t)
 
@@ -168,7 +181,7 @@ local function art(x,y,t)
     local light = { 0, 0, 0.9 }
     local diffuse = clamp(dot(n, light))
 
-    return diffuse * 5 + (p - 1) * 0.0 + 7
+    return diffuse * 4 + (0 - p) * 1.15 + (p - 0) * 0.0 + -1
   end
 
   return 16
