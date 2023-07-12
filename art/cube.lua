@@ -1,7 +1,10 @@
 local _t = 0
 local size = 0.6
 
-local length, rx, ry, rz = lib.utils.length, lib.utils.rotX, lib.utils.rotY, lib.utils.rotZ
+local utils = require "lib.utils"
+local renderer = require "lib.fragment"
+
+local length, rx, ry, rz = utils.length, utils.rotX, utils.rotY, utils.rotZ
 
 function vecSum(a, b)
   return { a[1] + b[1], a[2] + b[2], a[3] + b[3] }
@@ -80,16 +83,67 @@ function frame_approx(v)
   return math.max(cube(v), -cube(v, { -size * 2, -size * 0.8, -size * 0.8 }), -cube(v, { -size * 0.8, -size * 2, -size * 0.8 }), -cube(v, { -size * 0.8, -size * 0.8, -size * 2 }))
 end
 
+function icosahedron(q)
+  local G = 0.5 + 0.5 * math.sqrt(5)
+  local n = normalize({ G, 1/G, 0 })
+  local d = normalize({ 1, 1, 1 })
+  local p = abs(q)
+  return math.max(
+    dot(p, n),
+    dot(p, { n[3], n[1], n[2] }),
+    dot(p, { n[2], n[3], n[1] }),
+    dot(p, d)
+  ) - 0.7
+end
+
+function dodecahedron(q)
+  local G = 0.5 + 0.5 * math.sqrt(5)
+  local n = normalize({ G, 1, 0 })
+  local p = abs(q)
+  return math.max(
+    dot(p, n),
+    dot(p, { n[3], n[1], n[2] }),
+    dot(p, { n[2], n[3], n[1] })
+  ) - 0.7
+end
+
+function weirdedron(q)
+  local G = 0.5 + 0.5 * math.sqrt(5)
+  local n = normalize({ G, 1/G, 0 })
+  local d = normalize({ 1, 1, 1 })
+  local p = abs(q)
+  return math.max(
+    -- dot(p, n),
+    dot(p, { n[3], n[1], n[2] }),
+    dot(p, { n[2], n[3], n[1] }),
+    dot(p, d)
+  ) - 0.6
+end
+
+function crystal(q)
+  local c = math.cos(math.pi/5)
+  local s = math.sqrt(0.75 - c*c)
+  local n = { -0.5, -c, s }
+
+  local p = abs(q)
+
+  for i = 1, 3 do
+    p = abs(p)
+    p = vecSum(p, vecScale(n, -2 * math.min(0, dot(p, n))))
+  end
+
+  return p[3] - 0.7
+end
+
 function sdf(q)
-  -- local q = rx(ry(rz(q, _t), _t * 1), _t * 3)
-  local q = ry(q, _t * 2.5)
-  return math.min(cyl(q), heart(q))
+  local v = rx(ry(q, _t), _t)
+  return crystal(v)
 end
 
 function raycast(ro, rd)
   local a = 0
 
-  for i = 1, 64 do
+  for i = 1, 48 do
     local p = vecSum(ro, vecScale(rd, a))
     local d = sdf(p)
 
@@ -123,14 +177,18 @@ function normal(q)
 end
 
 local function art(x,y,t)
-  _t = t * 0.05
+  _t = t * 0.2
 
   local ro = { 0, 0, 3 }
   local rd = { (x - 0.5), (y - 0.5), -1 }
 
+  -- local __t = _t * 0.1 * -1
+  -- ro = rotX(rotY(ro, __t), __t)
+  -- rd = rotX(rotY(rd, __t), __t)
+
   local p = raycast(ro, rd)
 
-  if p < 5 then
+  if p < 3 then
     local q = vecSum(ro, vecScale(rd, p))
     local n = normal(q)
 
@@ -144,20 +202,6 @@ local function art(x,y,t)
   return 0
 end
 
-local canvasSize = 768
-
-function love.load()
-  canvasSize = love.graphics.getWidth()
-
-  font = love.graphics.newFont("neodgm.ttf", 16, "mono")
-  love.graphics.setFont(font)
-
-  -- lib.save(function(f)
-  --   lib.fragment(art, 64, canvasSize, f * 5)
-  -- end, 30 * 10, 30)
-end
-
 function love.draw()
-  lib.fragment(art, 64, canvasSize, love.timer.getTime() * 5)
-  -- lib.ascii(art, 96, canvasSize, love.timer.getTime() * 5)
+  renderer(art, 96, 768, love.timer.getTime() * 5)
 end
