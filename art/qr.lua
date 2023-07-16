@@ -4,6 +4,7 @@ local noise_scale = 1.5
 
 local w = length * size
 local h = length * size
+local qr
 
 local colors = {
   {0.9, 0.9, 0.9},
@@ -47,7 +48,6 @@ local function deceive(def)
     end
   end
 
-
   -- add single alignment pattern
   for i = 0, 4 do
     for j = 0, 4 do
@@ -56,10 +56,7 @@ local function deceive(def)
   end
 end
 
-function love.draw()
-  love.graphics.clear(0.9, 0.9, 0.9)
-  local t = love.timer.getTime() * 5
-
+local function gen()
   local def = {}
   for i = 0, length - 1 do
     def[i] = {}
@@ -68,20 +65,78 @@ function love.draw()
     end
   end
 
-  love.graphics.push()
-  -- center the grid
-  love.graphics.translate(love.graphics.getWidth() / 2 - w / 2, love.graphics.getHeight() / 2 - h / 2)
-
   for i = 0, length - 1 do
     for j = 0, length - 1 do
       def[i][j] = love.math.noise(i / noise_scale, j / noise_scale, t) > 0.5 and 1 or 0
 
       deceive(def)
-
-      love.graphics.setColor(colors[def[i][j] + 1])
-
-      love.graphics.rectangle("fill", i * size, j * size, size, size)
     end
+  end
+
+  return def
+end
+
+local world = love.physics.newWorld(0, 0, false)
+
+-- start with ground
+local ground = love.physics.newBody(world, 0, h + 20, "static")
+local ground_shape = love.physics.newRectangleShape(love.graphics.getWidth() * 2, 1)
+local ground_fixture = love.physics.newFixture(ground, ground_shape)
+
+local bodies = {
+  ground
+}
+
+
+function love.load()
+  qr = gen()
+
+  for i = 0, length - 1 do
+    for j = 0, length - 1 do
+      if qr[i][j] == 1 then
+        local body = love.physics.newBody(world, i * size, j * size, "dynamic")
+        local shape = love.physics.newRectangleShape(size, size)
+        local fixture = love.physics.newFixture(body, shape)
+        table.insert(bodies, body)
+      end
+    end
+  end
+
+  -- gravity
+  world:setGravity(0, 20)
+end
+
+local running = false
+function love.update(dt)
+  if running then
+    world:update(dt)
+  end
+end
+
+function love.keypressed(key)
+  if key == "space" then
+    running = not running
+  end
+end
+
+function love.draw()
+  love.graphics.clear(0.9, 0.9, 0.9)
+  local t = love.timer.getTime() * 5
+
+  love.graphics.push()
+  love.graphics.translate(love.graphics.getWidth() / 2 - w / 2, love.graphics.getHeight() / 2 - h / 2)
+
+  for b = 2, #bodies do
+    local body = bodies[b]
+    local x, y = body:getPosition()
+    local angle = body:getAngle()
+
+    love.graphics.push()
+    love.graphics.translate(x, y)
+    love.graphics.rotate(angle)
+    love.graphics.setColor(colors[2])
+    love.graphics.rectangle("fill", -size / 2, -size / 2, size * 1.1, size * 1.1)
+    love.graphics.pop()
   end
 
   love.graphics.pop()
