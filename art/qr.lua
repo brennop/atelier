@@ -41,7 +41,7 @@ function love.draw()
   love.graphics.clear(0.9, 0.9, 0.9)
   love.graphics.setBlendMode("subtract")
 
-  local t = love.timer.getTime()
+  local t = love.timer.getTime() * 0.6
 
   love.graphics.push()
   love.graphics.translate(love.graphics.getWidth() / 2 - w / 2, love.graphics.getHeight() / 2 - h / 2)
@@ -49,7 +49,7 @@ function love.draw()
 
   for i, k in ipairs(vectors) do
     local v = k[1]
-    local a = math.cos(t * 0.5) * math.pi + math.pi
+    local a = math.cos(t * 0.9) * math.pi/2 + math.pi/2
     local _v = ((v * size) - center):rotatedY(a) + center
 
     local c = colors[k[2]]
