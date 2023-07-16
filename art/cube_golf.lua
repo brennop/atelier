@@ -1,7 +1,9 @@
 local _t = 0
 local size = 0.6
 
-local length, rx, ry, rz = lib.utils.length, lib.utils.rotX, lib.utils.rotY, lib.utils.rotZ
+local utils = require "lib.utils"
+local renderer = require "lib.fragment"
+local length, rx, ry, rz = utils.length, utils.rotX, utils.rotY, utils.rotZ
 
 function s(a, b)
   return { a[1] + b[1], a[2] + b[2], a[3] + b[3] }
@@ -45,14 +47,15 @@ local function art(x,y,t)
 
   local a = 0
 
-  for i = 1, 16 do
+  for i = 1, 128 do
     a = a + sdf(s(ro, m(rd, a)))
   end
 
-  return lib.utils.smoothstep(0, 8, a)
+  return utils.smoothstep(0, 12, a)
+  -- return math.sqrt(a)
 end
 
 function love.draw()
-  lib.fragment(art, 64, 768, love.timer.getTime() * 5)
+  renderer(art, 96, 768, love.timer.getTime() * 5)
 end
 

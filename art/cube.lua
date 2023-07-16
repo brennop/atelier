@@ -63,7 +63,7 @@ end
 
 function oct(q)
   local p = abs(q)
-  return (p[1] + p[2] + p[3] - 1) * 0.5
+  return (p[1] + p[2] + p[3] - 1) * 0.1
 end
 
 function torus(q, t)
@@ -137,7 +137,7 @@ end
 
 function sdf(q)
   local v = rx(ry(q, _t), _t)
-  return crystal(v)
+  return oct(v)
 end
 
 function raycast(ro, rd)
@@ -179,7 +179,7 @@ end
 local function art(x,y,t)
   _t = t * 0.2
 
-  local ro = { 0, 0, 3 }
+  local ro = { 0, 0, 5 }
   local rd = { (x - 0.5), (y - 0.5), -1 }
 
   -- local __t = _t * 0.1 * -1
@@ -188,15 +188,15 @@ local function art(x,y,t)
 
   local p = raycast(ro, rd)
 
-  if p < 3 then
+  if p < 4.5 then
     local q = vecSum(ro, vecScale(rd, p))
     local n = normal(q)
 
-    local light = { .577, .577, -.577 }
+    local light = { .577, -.577, -.577 }
     local diffuse = clamp(dot(n, light))
     local ambient = 0.5 + 0.5 * dot(n, {0, -1, 0})
 
-    return 11 - ambient * 3 + diffuse * 1
+    return p * p
   end
 
   return 0
